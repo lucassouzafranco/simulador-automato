@@ -4,6 +4,9 @@
 # Local history builder script
 build_history.ps1
 
+# UI Design guidelines
+design.md
+
 # Python cache
 __pycache__/
 *.pyc
