@@ -1,0 +1,39 @@
+.section {
+  width: 100%;
+}
+
+.size-sm {
+  padding: var(--spacing-8) 0;
+}
+.size-md {
+  padding: var(--spacing-16) 0;
+}
+.size-lg {
+  padding: var(--spacing-24) 0;
+}
+.size-xl {
+  padding: var(--spacing-32) 0;
+}
+
+.bg-default {
+  background-color: var(--color-background);
+}
+.bg-muted {
+  background-color: var(--color-muted);
+}
+.bg-card {
+  background-color: var(--color-card);
+}
+.bg-primary {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+
+.container {
+  width: 100%;
+  max-width: var(--breakpoint-xl);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing-4);
+  padding-right: var(--spacing-4);
+}

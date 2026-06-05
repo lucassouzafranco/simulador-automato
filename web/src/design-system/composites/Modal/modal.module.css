@@ -1,0 +1,108 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-index-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: color-mix(in srgb, var(--color-background) 60%, transparent);
+  backdrop-filter: blur(4px);
+  animation: fadeIn var(--transition-base);
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+  max-width: 90vw;
+  max-height: 85vh;
+  width: 100%;
+  max-width: 512px;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  overflow-y: auto;
+  animation: slideIn var(--transition-base);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  padding: var(--spacing-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-600);
+  line-height: var(--line-height-tight);
+  margin: 0 0 var(--spacing-2) 0;
+}
+
+.description {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted-foreground);
+  margin: 0;
+}
+
+.footer {
+  display: flex;
+  gap: var(--spacing-2);
+  justify-content: flex-end;
+  padding: var(--spacing-6);
+  border-top: 1px solid var(--color-border);
+}
+
+.close {
+  position: absolute;
+  right: var(--spacing-4);
+  top: var(--spacing-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  transition: background-color var(--transition-base), color var(--transition-base), outline-color var(--transition-base);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.close:hover {
+  background-color: var(--color-muted);
+  color: var(--color-foreground);
+}
+
+.close:focus-visible {
+  outline-color: var(--color-ring);
+}

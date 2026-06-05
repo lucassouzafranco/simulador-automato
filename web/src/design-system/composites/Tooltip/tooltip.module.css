@@ -1,0 +1,85 @@
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: var(--z-index-tooltip);
+  padding: var(--spacing-2) var(--spacing-3);
+  background-color: var(--color-popover);
+  color: var(--color-popover-foreground);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-tight);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: fadeIn var(--transition-fast);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.top {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: var(--spacing-2);
+}
+
+.right {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: var(--spacing-2);
+}
+
+.bottom {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: var(--spacing-2);
+}
+
+.left {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: var(--spacing-2);
+}
+
+.align-start.top,
+.align-start.bottom {
+  left: 0;
+  transform: none;
+}
+
+.align-end.top,
+.align-end.bottom {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+
+.align-start.right,
+.align-start.left {
+  top: 0;
+  transform: none;
+}
+
+.align-end.right,
+.align-end.left {
+  bottom: 0;
+  top: auto;
+  transform: none;
+}

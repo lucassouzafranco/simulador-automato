@@ -1,0 +1,31 @@
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing-4);
+  padding-right: var(--spacing-4);
+}
+
+.noPadding {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.size-sm {
+  max-width: var(--breakpoint-sm);
+}
+.size-md {
+  max-width: var(--breakpoint-md);
+}
+.size-lg {
+  max-width: var(--breakpoint-lg);
+}
+.size-xl {
+  max-width: var(--breakpoint-xl);
+}
+.size-2xl {
+  max-width: var(--breakpoint-2xl);
+}
+.size-full {
+  max-width: none;
+}

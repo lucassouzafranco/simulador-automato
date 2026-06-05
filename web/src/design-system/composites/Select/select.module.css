@@ -1,0 +1,54 @@
+.wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.select {
+  width: 100%;
+  height: 2.5rem;
+  padding: var(--spacing-2) var(--spacing-3);
+  padding-right: var(--spacing-8);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-foreground);
+  background-color: var(--color-background);
+  border: 1px solid var(--color-input);
+  border-radius: var(--radius-md);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: border-color var(--transition-base), outline-color var(--transition-base), box-shadow var(--transition-base);
+  appearance: none;
+  cursor: pointer;
+}
+
+.select:focus-visible {
+  border-color: var(--color-ring);
+  outline-color: var(--color-ring);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-ring) 20%, transparent);
+}
+
+.select.error {
+  border-color: var(--color-destructive);
+}
+
+.select.error:focus-visible {
+  border-color: var(--color-destructive);
+  outline-color: var(--color-destructive);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-destructive) 20%, transparent);
+}
+
+.select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--color-muted);
+}
+
+.arrow {
+  position: absolute;
+  right: var(--spacing-3);
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-muted-foreground);
+}

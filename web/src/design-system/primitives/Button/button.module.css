@@ -1,0 +1,84 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-500);
+  transition: background-color var(--transition-base), color var(--transition-base), border-color var(--transition-base), outline-color var(--transition-base);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background-color: transparent;
+  color: inherit;
+  gap: var(--spacing-2);
+  white-space: nowrap;
+}
+
+.button:focus-visible {
+  outline-color: var(--color-ring);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* Variant styles */
+.button[data-variant="primary"] {
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+.button[data-variant="primary"]:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
+.button[data-variant="secondary"] {
+  background-color: var(--color-secondary);
+  color: var(--color-secondary-foreground);
+}
+.button[data-variant="secondary"]:hover:not(:disabled) {
+  background-color: var(--color-muted);
+}
+
+.button[data-variant="outline"] {
+  border-color: var(--color-border);
+  color: var(--color-foreground);
+}
+.button[data-variant="outline"]:hover:not(:disabled) {
+  background-color: var(--color-muted);
+}
+
+.button[data-variant="ghost"]:hover:not(:disabled) {
+  background-color: var(--color-muted);
+}
+
+.button[data-variant="destructive"] {
+  background-color: var(--color-destructive);
+  color: var(--color-destructive-foreground);
+}
+.button[data-variant="destructive"]:hover:not(:disabled) {
+  background-color: var(--color-destructive-hover);
+}
+
+/* Size styles */
+.button[data-size="sm"] {
+  height: 2rem;
+  padding: 0 var(--spacing-3);
+  font-size: var(--font-size-sm);
+}
+.button[data-size="md"] {
+  height: 2.5rem;
+  padding: 0 var(--spacing-4);
+  font-size: var(--font-size-base);
+}
+.button[data-size="lg"] {
+  height: 3rem;
+  padding: 0 var(--spacing-6);
+  font-size: var(--font-size-lg);
+}

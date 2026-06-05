@@ -1,0 +1,65 @@
+.chartContainer {
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  background-color: var(--color-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  padding: var(--spacing-4);
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  background-color: var(--color-popover);
+  color: var(--color-popover-foreground);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--font-size-sm);
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  z-index: var(--z-index-tooltip);
+  transform: translate(-50%, -100%);
+  margin-top: -8px;
+  white-space: nowrap;
+}
+
+.chartGrid {
+  stroke: var(--color-chart-grid);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.chartAxis {
+  stroke: var(--color-chart-axis);
+  stroke-width: 1;
+}
+
+.chartAreaFill {
+  fill: var(--color-primary);
+  fill-opacity: 0.2;
+}
+
+.chartLine {
+  stroke: var(--color-primary);
+  stroke-width: 2;
+  fill: none;
+}
+
+.chartBar {
+  fill: var(--color-primary);
+  transition: opacity var(--transition-fast);
+}
+
+.chartBar:hover {
+  opacity: 0.8;
+}
+
+.chartPieSlice {
+  transition: opacity var(--transition-fast);
+}
+
+.chartPieSlice:hover {
+  opacity: 0.85;
+}
