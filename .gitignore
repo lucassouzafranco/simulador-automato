@@ -1,0 +1,14 @@
+# AI agent instructions (local only)
+.gemini/
+
+# Local history builder script
+build_history.ps1
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs
+*.log
