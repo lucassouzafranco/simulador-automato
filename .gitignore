@@ -3,6 +3,7 @@
 
 # Local history builder script
 build_history.ps1
+git_delay_push.ps1
 
 # UI Design guidelines
 design.md
