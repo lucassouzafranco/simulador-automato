@@ -65,12 +65,19 @@ class NfaToDfaConverter:
                     if trace:
                         trace.log_step(PassoDidatico(
                             indice=passo_idx,
-                            descricao=f"Descoberto novo subconjunto de estados sob o símbolo '{s}': {self._frozenset_str(T)} mapeado para o estado '{t_rotulo}'.",
-                            dados_calculo={"simbolo": str(s), "subconjunto": [str(e) for e in T], "novo_estado": t_rotulo}
+                            descricao=f"Transição de '{u_afd}' com '{s}' leva ao novo subconjunto {self._frozenset_str(T)} mapeado para '{t_rotulo}'.",
+                            dados_calculo={"simbolo": str(s), "origem": str(u_afd), "destino": t_rotulo}
                         ))
                         passo_idx += 1
                 else:
                     t_afd = estado_map[T]
+                    if trace:
+                        trace.log_step(PassoDidatico(
+                            indice=passo_idx,
+                            descricao=f"Transição de '{u_afd}' com '{s}' leva ao subconjunto já conhecido '{t_afd}'.",
+                            dados_calculo={"simbolo": str(s), "origem": str(u_afd), "destino": str(t_afd)}
+                        ))
+                        passo_idx += 1
 
                 transicoes_afd.add(Transicao(origem=u_afd, simbolo=s, destino=t_afd))
 
