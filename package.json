@@ -4,7 +4,7 @@
   "description": "Script de redirecionamento de comandos npm para o diretório frontend web",
   "private": true,
   "scripts": {
-    "dev": "npm --prefix web run dev",
+    "dev": "python run_dev.py",
     "build": "npm --prefix web run build"
   }
 }
