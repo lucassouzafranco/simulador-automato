@@ -356,3 +356,88 @@ def convert_gr_to_af(data: ConvertGrToAfInput):
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.get("/api/docs")
+def list_docs():
+    import os
+    base_path = os.getcwd()
+    docs_dir = None
+    for _ in range(4):
+        candidate = os.path.join(base_path, 'docs')
+        if os.path.isdir(candidate):
+            docs_dir = candidate
+            break
+        base_path = os.path.dirname(base_path)
+    
+    if not docs_dir:
+        raise HTTPException(status_code=404, detail="Diretório de documentação não encontrado.")
+    
+    metadata = {
+        "arquitetura": "Arquitetura do Sistema",
+        "camada_aplicacao": "Casos de Uso & Aplicação",
+        "especificacoes_formais": "Especificações Formais",
+        "instrucoes_execucao": "Instruções de Inicialização",
+        "manual_tecnico": "Manual Técnico do Motor",
+        "manual_usuario": "Manual de Operação",
+        "modelo_dominio": "Modelo de Domínio & Estrutura"
+    }
+    
+    available_docs = []
+    try:
+        for filename in sorted(os.listdir(docs_dir)):
+            if filename.endswith(".md"):
+                doc_id = filename[:-3]
+                title = metadata.get(doc_id, doc_id.replace("_", " ").title())
+                available_docs.append({
+                    "id": doc_id,
+                    "title": title,
+                    "filename": filename
+                })
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao ler docs: {str(e)}")
+        
+    return available_docs
+
+
+@app.get("/api/docs/{doc_id}")
+def get_doc(doc_id: str):
+    import os
+    base_path = os.getcwd()
+    docs_dir = None
+    for _ in range(4):
+        candidate = os.path.join(base_path, 'docs')
+        if os.path.isdir(candidate):
+            docs_dir = candidate
+            break
+        base_path = os.path.dirname(base_path)
+        
+    if not docs_dir:
+        raise HTTPException(status_code=404, detail="Diretório de documentação não encontrado.")
+        
+    filename = f"{doc_id}.md"
+    file_path = os.path.join(docs_dir, filename)
+    if not os.path.isfile(file_path):
+        raise HTTPException(status_code=404, detail="Documento não encontrado.")
+        
+    metadata = {
+        "arquitetura": "Arquitetura do Sistema",
+        "camada_aplicacao": "Casos de Uso & Aplicação",
+        "especificacoes_formais": "Especificações Formais",
+        "instrucoes_execucao": "Instruções de Inicialização",
+        "manual_tecnico": "Manual Técnico do Motor",
+        "manual_usuario": "Manual de Operação",
+        "modelo_dominio": "Modelo de Domínio & Estrutura"
+    }
+    
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        return {
+            "id": doc_id,
+            "title": metadata.get(doc_id, doc_id.replace("_", " ").title()),
+            "content": content
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao ler arquivo: {str(e)}")
+
