@@ -1,0 +1,28 @@
+{
+  "name": "Simulador de Autômatos",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "forwardPorts": [8000, 5173, 3000],
+  "portsAttributes": {
+    "8000": {
+      "label": "Backend API (FastAPI)",
+      "onAutoForward": "silent"
+    },
+    "5173": {
+      "label": "Frontend Dev (Vite)",
+      "onAutoForward": "openBrowser"
+    },
+    "3000": {
+      "label": "Frontend Prod (Python static server)",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postCreateCommand": "python -m pip install -r requirements.txt && npm install --prefix web",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  }
+}

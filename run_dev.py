@@ -2,24 +2,36 @@ import os
 import sys
 import time
 import subprocess
+import platform
 
 def kill_process_on_port(port):
     try:
-        # Executa netstat para encontrar conexões na porta correspondente
-        output = subprocess.check_output("netstat -ano", shell=True).decode("utf-8", errors="ignore")
-        pids = set()
-        for line in output.splitlines():
-            if f":{port}" in line and "LISTENING" in line:
-                parts = line.strip().split()
-                if len(parts) >= 5:
-                    pid = parts[-1]
-                    if pid.isdigit() and int(pid) > 0:
-                        pids.add(int(pid))
-        
-        for pid in pids:
-            print(f"[Sistema] Detectado processo antigo ativo (PID {pid}) na porta {port}. Liberando porta...")
-            # Força o encerramento da árvore de processos inteira associada a este PID
-            subprocess.run(f"taskkill /F /T /PID {pid}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if platform.system() == "Windows":
+            # Executa netstat para encontrar conexões na porta correspondente
+            output = subprocess.check_output("netstat -ano", shell=True).decode("utf-8", errors="ignore")
+            pids = set()
+            for line in output.splitlines():
+                if f":{port}" in line and "LISTENING" in line:
+                    parts = line.strip().split()
+                    if len(parts) >= 5:
+                        pid = parts[-1]
+                        if pid.isdigit() and int(pid) > 0:
+                            pids.add(int(pid))
+            
+            for pid in pids:
+                print(f"[Sistema] Detectado processo antigo ativo (PID {pid}) na porta {port}. Liberando porta...")
+                subprocess.run(f"taskkill /F /T /PID {pid}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        else:
+            # Linux / macOS (Codespaces)
+            try:
+                output = subprocess.check_output(f"lsof -t -i:{port}", shell=True).decode("utf-8", errors="ignore")
+                pids = [int(pid) for pid in output.strip().split() if pid.isdigit()]
+                for pid in pids:
+                    print(f"[Sistema] Detectado processo antigo ativo (PID {pid}) na porta {port}. Liberando porta...")
+                    subprocess.run(f"kill -9 {pid}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            except subprocess.CalledProcessError:
+                # lsof retorna status != 0 se não encontrar nenhum processo ouvindo
+                pass
     except Exception as e:
         print(f"[Sistema] Erro ao verificar/liberar porta {port}: {e}")
 
