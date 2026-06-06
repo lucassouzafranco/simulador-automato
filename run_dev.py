@@ -38,7 +38,31 @@ def kill_process_on_port(port):
 def main():
     print("[Sistema] Iniciando ambiente integrado de desenvolvimento...")
     
-    # 1. Liberar portas se estiverem em uso para evitar conflito de inicialização
+    # 1. Verificação e instalação automática de dependências Python (Auto-healing)
+    try:
+        import fastapi
+        import uvicorn
+        import pydantic
+    except ImportError:
+        print("[Sistema] Dependencias Python ausentes. Instalando via pip...")
+        try:
+            subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"], check=True)
+        except Exception as e:
+            print(f"[Sistema] Erro ao instalar dependencias Python: {e}")
+            
+    # 2. Verificação e instalação automática de dependências npm (Auto-healing)
+    import shutil
+    has_npm = shutil.which('npm') is not None
+    if has_npm:
+        web_node_modules = os.path.join("web", "node_modules")
+        if not os.path.exists(web_node_modules):
+            print("[Sistema] Pasta web/node_modules ausente. Instalando dependencias npm...")
+            try:
+                subprocess.run("npm install", cwd="web", shell=True, check=True)
+            except Exception as e:
+                print(f"[Sistema] Erro ao instalar dependencias npm: {e}")
+                
+    # 3. Liberar portas se estiverem em uso para evitar conflito de inicialização
     kill_process_on_port(8000)  # FastAPI
     kill_process_on_port(5173)  # Vite
     
