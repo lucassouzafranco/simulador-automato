@@ -5,15 +5,18 @@
   "portsAttributes": {
     "8000": {
       "label": "Backend API (FastAPI)",
-      "onAutoForward": "silent"
+      "onAutoForward": "silent",
+      "visibility": "public"
     },
     "5173": {
       "label": "Frontend Dev (Vite)",
-      "onAutoForward": "openBrowser"
+      "onAutoForward": "openBrowser",
+      "visibility": "public"
     },
     "3000": {
       "label": "Frontend Prod (Python static server)",
-      "onAutoForward": "openBrowser"
+      "onAutoForward": "openBrowser",
+      "visibility": "public"
     }
   },
   "postCreateCommand": "python -m pip install -r requirements.txt && npm install --prefix web",
