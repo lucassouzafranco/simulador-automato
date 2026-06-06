@@ -353,7 +353,8 @@ body {
 .trans-table-wrap {
   border: 1px solid #1f1f1f;
   border-radius: 7px;
-  overflow: hidden;
+  max-height: 250px;
+  overflow-y: auto;
   background: #0d0d0d;
 }
 
@@ -369,6 +370,9 @@ body {
 }
 
 .trans-table th {
+  position: sticky;
+  top: 0;
+  background: #111;
   padding: 6px 10px;
   text-align: left;
   font-size: 11.5px;
@@ -376,6 +380,7 @@ body {
   color: #555;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  z-index: 1;
 }
 
 .trans-table td {
@@ -745,7 +750,8 @@ body {
 .result-transitions {
   border: 1px solid #1a1a1a;
   border-radius: 7px;
-  overflow: hidden;
+  max-height: 250px;
+  overflow-y: auto;
 }
 
 .result-trans-table {
@@ -755,6 +761,8 @@ body {
 }
 
 .result-trans-table th {
+  position: sticky;
+  top: 0;
   background: #111;
   padding: 6px 12px;
   text-align: left;
@@ -764,6 +772,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   border-bottom: 1px solid #1a1a1a;
+  z-index: 1;
 }
 
 .result-trans-table td {

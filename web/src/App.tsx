@@ -357,15 +357,14 @@ function App() {
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Smooth scroll down when visibleSteps updates
+  // Limpa o estado e o ID do último autômato se a definição mudar
   useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTo({
-        top: scrollContainerRef.current.scrollHeight,
-        behavior: 'smooth',
-      });
-    }
-  }, [visibleSteps]);
+    setLastAutomatonId(null);
+    setAutomatoResult(null);
+    setAllSteps([]);
+    setVisibleSteps([]);
+    setError(null);
+  }, [nome, estados, alfabeto, estadoInicial, estadosFinais, transicoes]);
 
   // Fetch documents list when documentation nav is active
   useEffect(() => {
@@ -424,7 +423,7 @@ function App() {
       } else {
         clearInterval(interval);
       }
-    }, 1500);
+    }, 3000);
   };
 
   // Form handlers: Transitions
