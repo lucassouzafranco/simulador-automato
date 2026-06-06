@@ -1,8 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './design-system/tokens/tokens.css';
 import './App.css';
-
-const BACKEND_URL = 'http://localhost:8000';
+const getBackendUrl = () => {
+  const host = window.location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1') {
+    return 'http://localhost:8000';
+  }
+  if (host.endsWith('.github.dev') || host.endsWith('.gitpod.io')) {
+    const protocol = window.location.protocol;
+    const parts = host.split('.');
+    let base = parts[0];
+    base = base.replace(/-5173$/, '').replace(/-3000$/, '').replace(/-8000$/, '');
+    const domain = parts.slice(1).join('.');
+    return `${protocol}//${base}-8000.${domain}`;
+  }
+  return `${window.location.protocol}//${host}:8000`;
+};
+const BACKEND_URL = getBackendUrl();
 
 interface Transicao {
   origem: string;
@@ -752,7 +766,7 @@ function App() {
         <div className="topbar-left">
           <div className="topbar-logo">
             <span className="topbar-logo-icon">Σ</span>
-            Teoria da Computação
+            SIN 141 - Teoria da Computação
           </div>
           <nav className="topbar-nav">
             <button 
@@ -767,7 +781,6 @@ function App() {
             >
               Documentação
             </button>
-            <button className="topbar-nav-btn">Ajuda</button>
           </nav>
         </div>
         <div className="topbar-right">
@@ -780,16 +793,15 @@ function App() {
           {!loading && error && (
             <div className="topbar-status-pill">
               <span className="status-dot error" />
-              Falha no Motor
+              Motor Offline
             </div>
           )}
           {!loading && !error && (
             <div className="topbar-status-pill">
               <span className="status-dot" />
-              Motor Pronto
+              Motor de Cálculo Online
             </div>
           )}
-          <button className="topbar-icon-btn"><SettingsIcon size={18} /></button>
         </div>
       </header>
 
@@ -834,15 +846,6 @@ function App() {
               >
                 <SettingsIcon size={16} />
                 Minimizador
-              </button>
-            </div>
-            <div className="sidebar-separator" />
-            <div className="sidebar-section">
-              <div className="sidebar-section-label">Parâmetros</div>
-              <button className="sidebar-item">
-                <UserIcon />
-                Histórico
-                <span className="sidebar-item-badge">4</span>
               </button>
             </div>
           </aside>
