@@ -248,6 +248,33 @@ function parseMarkdownToHtml(md: string): string {
 
   return result.join('\n');
 }
+
+const TerminalIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+    <polyline points="4 17 10 11 4 5"/>
+    <line x1="12" y1="19" x2="20" y2="19"/>
+  </svg>
+);
+
+const ListIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+    <line x1="8" y1="6" x2="21" y2="6"/>
+    <line x1="8" y1="12" x2="21" y2="12"/>
+    <line x1="8" y1="18" x2="21" y2="18"/>
+    <line x1="3" y1="6" x2="3.01" y2="6"/>
+    <line x1="3" y1="12" x2="3.01" y2="12"/>
+    <line x1="3" y1="18" x2="3.01" y2="18"/>
+  </svg>
+);
+
+const MinimizeIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+    <polyline points="4 14 10 14 10 20"/>
+    <polyline points="20 10 14 10 14 4"/>
+    <line x1="14" y1="10" x2="21" y2="3"/>
+    <line x1="3" y1="21" x2="10" y2="14"/>
+  </svg>
+);
 const FolderIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
     <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"/>
@@ -476,6 +503,10 @@ function App() {
 
   // API Call: Create Automaton First (AFN helper)
   const saveAutomaton = async (): Promise<string | null> => {
+    if (transicoes.length === 0) {
+      setError('O autômato precisa ter pelo menos uma transição.');
+      return null;
+    }
     const listEstados = estados.split(',').map((e) => e.trim()).filter(Boolean);
     const listAlfabeto = alfabeto.split(',').map((a) => a.trim()).filter(Boolean);
     const listFinais = estadosFinais.split(',').map((f) => f.trim()).filter(Boolean);
@@ -764,7 +795,7 @@ function App() {
       <header className="topbar">
         <div className="topbar-left">
           <div className="topbar-logo">
-            <span className="topbar-logo-icon">Σ</span>
+            <span className="topbar-logo-icon">TC</span>
             SIN 141 - Teoria da Computação
           </div>
           <nav className="topbar-nav">
@@ -792,13 +823,7 @@ function App() {
           {!loading && error && (
             <div className="topbar-status-pill">
               <span className="status-dot error" />
-              Motor Offline
-            </div>
-          )}
-          {!loading && !error && (
-            <div className="topbar-status-pill">
-              <span className="status-dot" />
-              Motor de Cálculo Online
+              API: Endpoint Inacessível
             </div>
           )}
         </div>
@@ -810,7 +835,7 @@ function App() {
           {/* Leftmost Sidebar */}
           <aside className="sidebar">
             <div className="sidebar-section">
-              <div className="sidebar-section-label">Planejamento</div>
+              <div className="sidebar-section-label">Operações</div>
               <button
                 className={`sidebar-item ${currentNav === 'simulador' && activeTab === 'automato' ? 'active' : ''}`}
                 onClick={() => {
@@ -818,7 +843,7 @@ function App() {
                   setActiveTab('automato');
                 }}
               >
-                <FolderIcon />
+                <TerminalIcon />
                 Simuladores
               </button>
               <button
@@ -828,7 +853,7 @@ function App() {
                   setActiveTab('gramatica');
                 }}
               >
-                <ChartIcon />
+                <ListIcon />
                 Gramáticas
               </button>
               <button
@@ -843,7 +868,7 @@ function App() {
                   }
                 }}
               >
-                <SettingsIcon size={16} />
+                <MinimizeIcon />
                 Minimizador
               </button>
             </div>
@@ -1025,9 +1050,6 @@ function App() {
             <div className="panel-right">
               <div className="panel-right-header">
                 <div className="panel-right-title">Rastreamento de Execução</div>
-                <div className="panel-right-meta">
-                  <span className="meta-badge">Inferência Ativa</span>
-                </div>
               </div>
 
               <div className="panel-right-body" ref={scrollContainerRef}>
@@ -1105,7 +1127,7 @@ function App() {
                             value={simularPalavraInput}
                             onChange={(e) => setSimularPalavraInput(e.target.value)}
                           />
-                          <button className="btn btn-secondary btn-sm" onClick={handleSimulateWord} disabled={loading}>
+                          <button className="btn btn-primary btn-sm" onClick={handleSimulateWord} disabled={loading}>
                             Simular Entrada
                           </button>
                         </div>
@@ -1154,8 +1176,21 @@ function App() {
                 {visibleSteps.length > 0 && (
                   <div className="timeline">
                     <div className="timeline-rail" />
-                    {visibleSteps.map((step, idx) => (
-                      <div key={idx} className="timeline-item">
+                    {visibleSteps.map((step, idx) => {
+                      let statusClass = '';
+                      const desc = step.descricao.toLowerCase();
+                      if (desc.includes('aceit') || desc.includes('sucesso') || desc.includes('equivalente') || desc.includes('válid')) {
+                        statusClass = 'success';
+                      } else if (desc.includes('rejeit') || desc.includes('erro') || desc.includes('falha') || desc.includes('inválid')) {
+                        statusClass = 'error';
+                      } else if (desc.includes('atenção') || desc.includes('aviso')) {
+                        statusClass = 'warning';
+                      } else if (desc.includes('iniciando') || desc.includes('processando') || desc.includes('etapa')) {
+                        statusClass = 'info';
+                      }
+
+                      return (
+                        <div key={idx} className={`timeline-item ${statusClass}`}>
                         <div className="timeline-node">{step.indice}</div>
                         <div className="timeline-card">
                           <div className="timeline-card-desc">{step.descricao}</div>
@@ -1171,7 +1206,7 @@ function App() {
                           )}
                         </div>
                       </div>
-                    ))}
+                    )})}
                     {loading && (
                       <div className="loading-row">
                         <div className="loader-dots">
@@ -1233,14 +1268,6 @@ function App() {
                     <h1 className="doc-meta-title">
                       {docList.find((d) => d.id === selectedDocId)?.title || 'Documentação'}
                     </h1>
-                     <div className="doc-meta-stats">
-                      <span className="doc-meta-stat-item">
-                        <ClockIcon /> {getReadingTime(selectedDocContent)} min de leitura
-                      </span>
-                      <span className="doc-meta-stat-item">
-                        <PenIcon /> Comitê Editorial
-                      </span>
-                    </div>
                   </div>
                   
                   <div 
