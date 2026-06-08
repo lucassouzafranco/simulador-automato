@@ -21,10 +21,6 @@ from application.dtos.simula import (
     SimularPalavraInputDTO,
     SimularPalavraOutputDTO,
 )
-from application.dtos.exporta import (
-    ExportarResultadoInputDTO,
-    ExportarResultadoOutputDTO,
-)
 from application.dtos.mapeadores import (
     mapear_automato_para_dto,
     mapear_gramatica_para_dto,
@@ -54,10 +50,6 @@ __all__ = [
     # Simula
     "SimularPalavraInputDTO",
     "SimularPalavraOutputDTO",
-    
-    # Exporta
-    "ExportarResultadoInputDTO",
-    "ExportarResultadoOutputDTO",
     
     # Mapeadores
     "mapear_automato_para_dto",

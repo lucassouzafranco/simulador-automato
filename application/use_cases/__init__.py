@@ -4,7 +4,6 @@ from application.use_cases.simular_palavra import SimularPalavraUseCase
 from application.use_cases.minimizar_afd import MinimizarAFDUseCase
 from application.use_cases.converter_af_gr import ConverterAFParaGRUseCase
 from application.use_cases.converter_gr_af import ConverterGRParaAFUseCase
-from application.use_cases.exportar_resultado import ExportarResultadoUseCase
 
 __all__ = [
     "CriarAFNUseCase",
@@ -13,5 +12,4 @@ __all__ = [
     "MinimizarAFDUseCase",
     "ConverterAFParaGRUseCase",
     "ConverterGRParaAFUseCase",
-    "ExportarResultadoUseCase",
 ]

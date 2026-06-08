@@ -6,17 +6,17 @@ from core import (
     DidacticTracePort, PassoDidatico, Variavel, Terminal, RegraProducao, GramaticaRegular
 )
 
-class DummyTrace(DidacticTracePort):
+class HistoricoFalso(DidacticTracePort):
     def log_step(self, step: PassoDidatico) -> None: pass
     def get_steps(self) -> list[PassoDidatico]: return []
     def clean(self) -> None: pass
 
 class TestComprehensiveSuite(unittest.TestCase):
     def setUp(self):
-        self.trace = DummyTrace()
+        self.historico = HistoricoFalso()
         self.simulador = WordSimulator()
-        self.converter_nfa_dfa = NfaToDfaConverter()
-        self.minimizer = DfaMinimizer()
+        self.conversor_afn_afd = NfaToDfaConverter()
+        self.minimizador = DfaMinimizer()
         self.a = Simbolo("a")
         self.b = Simbolo("b")
         self.c = Simbolo("c")
@@ -34,7 +34,7 @@ class TestComprehensiveSuite(unittest.TestCase):
             Transicao(q3, self.b, q3)
         ])
         afn = AFN(nome="AFN", alfabeto=self.alfabeto_ab, estados=frozenset([q0,q1,q2,q3]), estado_inicial=q0, estados_finais=frozenset([q2]), transicoes=transicoes)
-        afd = self.converter_nfa_dfa.converter(afn, self.trace)
+        afd = self.conversor_afn_afd.converter(afn, self.historico)
         estados_nomes = [e.rotulo for e in afd.estados]
         self.assertFalse(any("q3" in e for e in estados_nomes))
 
@@ -46,9 +46,9 @@ class TestComprehensiveSuite(unittest.TestCase):
             Transicao(qd, self.a, qd), Transicao(qd, self.b, qd)
         ])
         afn = AFN(nome="AFN", alfabeto=self.alfabeto_ab, estados=frozenset([q0,q1,qd]), estado_inicial=q0, estados_finais=frozenset([q1]), transicoes=transicoes)
-        afd = self.converter_nfa_dfa.converter(afn, self.trace)
-        self.assertTrue(self.simulador.simular(afd, Palavra.de_string("a"), self.trace))
-        self.assertFalse(self.simulador.simular(afd, Palavra.de_string("b"), self.trace))
+        afd = self.conversor_afn_afd.converter(afn, self.historico)
+        self.assertTrue(self.simulador.simular(afd, Palavra.de_string("a"), self.historico))
+        self.assertFalse(self.simulador.simular(afd, Palavra.de_string("b"), self.historico))
 
     def test_d3_afn_multiplos_destinos(self):
         q0, q1, q2 = Estado("q0"), Estado("q1"), Estado("q2")
@@ -57,7 +57,7 @@ class TestComprehensiveSuite(unittest.TestCase):
             Transicao(q1, self.b, q2)
         ])
         afn = AFN(nome="AFN", alfabeto=self.alfabeto_ab, estados=frozenset([q0,q1,q2]), estado_inicial=q0, estados_finais=frozenset([q2]), transicoes=transicoes)
-        afd = self.converter_nfa_dfa.converter(afn, self.trace)
+        afd = self.conversor_afn_afd.converter(afn, self.historico)
         estados_nomes = [e.rotulo for e in afd.estados]
         self.assertTrue(any("q0,q1" in e or "q1,q0" in e for e in estados_nomes))
 
@@ -69,7 +69,7 @@ class TestComprehensiveSuite(unittest.TestCase):
             Transicao(q2, self.b, q2), Transicao(q2, self.a, q3)
         ])
         afn = AFN(nome="AFN", alfabeto=self.alfabeto_ab, estados=frozenset([q0,q1,q2,q3]), estado_inicial=q0, estados_finais=frozenset([q3]), transicoes=transicoes)
-        afd = self.converter_nfa_dfa.converter(afn, self.trace)
+        afd = self.conversor_afn_afd.converter(afn, self.historico)
         init_name = afd.estado_inicial.rotulo
         self.assertTrue("q0" in init_name and "q1" in init_name and "q2" in init_name)
 
@@ -79,7 +79,7 @@ class TestComprehensiveSuite(unittest.TestCase):
             Transicao(q0, self.eps, q1), Transicao(q1, self.eps, q2), Transicao(q2, self.eps, q0)
         ])
         afn = AFN(nome="AFN", alfabeto=self.alfabeto_ab, estados=frozenset([q0,q1,q2]), estado_inicial=q0, estados_finais=frozenset([q2]), transicoes=transicoes)
-        afd = self.converter_nfa_dfa.converter(afn, self.trace)
+        afd = self.conversor_afn_afd.converter(afn, self.historico)
         self.assertTrue("q0" in afd.estado_inicial.rotulo)
         self.assertTrue("q1" in afd.estado_inicial.rotulo)
         self.assertTrue("q2" in afd.estado_inicial.rotulo)
@@ -88,13 +88,13 @@ class TestComprehensiveSuite(unittest.TestCase):
         q0, q1 = Estado("q0"), Estado("q1")
         transicoes = frozenset([Transicao(q0, self.eps, q1)])
         afn = AFN(nome="AFN", alfabeto=self.alfabeto_ab, estados=frozenset([q0,q1]), estado_inicial=q0, estados_finais=frozenset([q1]), transicoes=transicoes)
-        afd = self.converter_nfa_dfa.converter(afn, self.trace)
+        afd = self.conversor_afn_afd.converter(afn, self.historico)
         self.assertIn(afd.estado_inicial, afd.estados_finais)
 
     def test_d8_fecho_eps_vazio(self):
         q0 = Estado("q0")
         afn = AFN(nome="AFN", alfabeto=self.alfabeto_ab, estados=frozenset([q0]), estado_inicial=q0, estados_finais=frozenset([]), transicoes=frozenset([]))
-        afd = self.converter_nfa_dfa.converter(afn, self.trace)
+        afd = self.conversor_afn_afd.converter(afn, self.historico)
         self.assertEqual(len(afd.estados), 1)
 
     # --- B. Minimização ---
@@ -111,7 +111,7 @@ class TestComprehensiveSuite(unittest.TestCase):
             Transicao(F, zero, F), Transicao(F, um, F),
         ])
         afd = AFD(nome="AFD", alfabeto=alfabeto, estados=frozenset([A,B,C,D,E,F]), estado_inicial=A, estados_finais=frozenset([C,D,F]), transicoes=transicoes)
-        min_afd = self.minimizer.minimizar(afd, self.trace)
+        min_afd = self.minimizer.minimizar(afd, self.historico)
         self.assertTrue(len(min_afd.estados) < 6)
 
     def test_m8_refinamento_cardinalidade(self):
@@ -122,30 +122,30 @@ class TestComprehensiveSuite(unittest.TestCase):
         q0, q1 = Estado("q0"), Estado("q1")
         transicoes = frozenset([Transicao(q0, self.a, q1), Transicao(q1, self.b, q1)])
         afd = AFD(nome="AFD", alfabeto=self.alfabeto_ab, estados=frozenset([q0,q1]), estado_inicial=q0, estados_finais=frozenset([q1]), transicoes=transicoes)
-        self.assertTrue(self.simulador.simular(afd, Palavra.de_string("ab"), self.trace))
-        self.assertTrue(self.simulador.simular(afd, Palavra.de_string("abbb"), self.trace))
+        self.assertTrue(self.simulador.simular(afd, Palavra.de_string("ab"), self.historico))
+        self.assertTrue(self.simulador.simular(afd, Palavra.de_string("abbb"), self.historico))
 
     def test_s2_palavra_rejeitada(self):
         q0, q1 = Estado("q0"), Estado("q1")
         transicoes = frozenset([Transicao(q0, self.a, q1), Transicao(q1, self.b, q1)])
         afd = AFD(nome="AFD", alfabeto=self.alfabeto_ab, estados=frozenset([q0,q1]), estado_inicial=q0, estados_finais=frozenset([q1]), transicoes=transicoes)
-        self.assertFalse(self.simulador.simular(afd, Palavra.de_string(""), self.trace))
-        self.assertFalse(self.simulador.simular(afd, Palavra.de_string("b"), self.trace))
-        self.assertFalse(self.simulador.simular(afd, Palavra.de_string("ba"), self.trace))
+        self.assertFalse(self.simulador.simular(afd, Palavra.de_string(""), self.historico))
+        self.assertFalse(self.simulador.simular(afd, Palavra.de_string("b"), self.historico))
+        self.assertFalse(self.simulador.simular(afd, Palavra.de_string("ba"), self.historico))
 
     def test_s8_nenhum_estado_ativo(self):
         q0, q1 = Estado("q0"), Estado("q1")
         transicoes = frozenset([Transicao(q0, self.a, q1)])
         afn = AFN(nome="AFN", alfabeto=self.alfabeto_ab, estados=frozenset([q0,q1]), estado_inicial=q0, estados_finais=frozenset([q1]), transicoes=transicoes)
-        self.assertFalse(self.simulador.simular(afn, Palavra.de_string("ab"), self.trace))
+        self.assertFalse(self.simulador.simular(afn, Palavra.de_string("ab"), self.historico))
 
     # --- F. Conversão Autômato -> Gramática ---
     def test_g2_estado_inicial_final(self):
         q0 = Estado("q0")
         transicoes = frozenset([Transicao(q0, self.a, q0)])
         afd = AFD(nome="AFD", alfabeto=self.alfabeto_ab, estados=frozenset([q0]), estado_inicial=q0, estados_finais=frozenset([q0]), transicoes=transicoes)
-        converter = AutomatonToGrammarConverter()
-        gr = converter.converter(afd, self.trace)
+        conversor = AutomatonToGrammarConverter()
+        gr = conversor.conversor(afd, self.historico)
         self.assertTrue(any(p.esquerda.rotulo.startswith("S_") for p in gr.producoes))
 
     # --- G. Conversão Gramática -> AFN ---
@@ -158,10 +158,10 @@ class TestComprehensiveSuite(unittest.TestCase):
             RegraProducao(esquerda=B, direita=tuple([c]))
         ])
         gr = GramaticaRegular(terminais=frozenset([a,b,c]), variaveis=frozenset([S,A,B]), producoes=producoes, simbolo_inicial=S)
-        converter = GrammarToAutomatonConverter()
-        afn = converter.converter(gr, self.trace)
-        self.assertTrue(self.simulador.simular(afn, Palavra.de_string("abc"), self.trace))
-        self.assertFalse(self.simulador.simular(afn, Palavra.de_string("ab"), self.trace))
+        conversor = GrammarToAutomatonConverter()
+        afn = conversor.conversor(gr, self.historico)
+        self.assertTrue(self.simulador.simular(afn, Palavra.de_string("abc"), self.historico))
+        self.assertFalse(self.simulador.simular(afn, Palavra.de_string("ab"), self.historico))
 
     # --- H. Testes de Consistência ---
     def test_c4_asterisco(self):
@@ -169,15 +169,15 @@ class TestComprehensiveSuite(unittest.TestCase):
         transicoes = frozenset([Transicao(q0, self.a, q0)])
         afd = AFD(nome="AFD", alfabeto=self.alfabeto_ab, estados=frozenset([q0]), estado_inicial=q0, estados_finais=frozenset([q0]), transicoes=transicoes)
         
-        conv_gr = AutomatonToGrammarConverter().converter(afd, self.trace)
-        afn_from_gr = GrammarToAutomatonConverter().converter(conv_gr, self.trace)
-        afd_from_afn = self.converter_nfa_dfa.converter(afn_from_gr, self.trace)
-        min_afd = self.minimizer.minimizar(afd_from_afn, self.trace)
+        conv_gr = AutomatonToGrammarConverter().converter(afd, self.historico)
+        afn_from_gr = GrammarToAutomatonConverter().converter(conv_gr, self.historico)
+        afd_from_afn = self.conversor_afn_afd.converter(afn_from_gr, self.historico)
+        min_afd = self.minimizador.minimizar(afd_from_afn, self.historico)
         
-        self.assertTrue(self.simulador.simular(min_afd, Palavra.de_string(""), self.trace))
-        self.assertTrue(self.simulador.simular(min_afd, Palavra.de_string("a"), self.trace))
-        self.assertTrue(self.simulador.simular(min_afd, Palavra.de_string("aaa"), self.trace))
-        self.assertFalse(self.simulador.simular(min_afd, Palavra.de_string("b"), self.trace))
+        self.assertTrue(self.simulador.simular(min_afd, Palavra.de_string(""), self.historico))
+        self.assertTrue(self.simulador.simular(min_afd, Palavra.de_string("a"), self.historico))
+        self.assertTrue(self.simulador.simular(min_afd, Palavra.de_string("aaa"), self.historico))
+        self.assertFalse(self.simulador.simular(min_afd, Palavra.de_string("b"), self.historico))
 
 if __name__ == '__main__':
     unittest.main()

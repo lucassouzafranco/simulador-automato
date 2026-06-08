@@ -4,8 +4,10 @@ import asyncio
 from typing import List, Dict, Any, Union
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+import os
 
 # Core imports
 from core import (
@@ -441,3 +443,25 @@ def get_doc(doc_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao ler arquivo: {str(e)}")
 
+# ==============================================================================
+# INTEGRAÇÃO DOS ARQUIVOS ESTÁTICOS DO FRONTEND
+# ==============================================================================
+frontend_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "web", "dist")
+
+if os.path.exists(frontend_path):
+    # Servir assets (JS, CSS, imagens)
+    assets_dir = os.path.join(frontend_path, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+    # Catch-all para servir o index.html (SPA routing) ou arquivos raiz estáticos
+    @app.get("/{full_path:path}")
+    def serve_frontend(full_path: str):
+        if full_path.startswith("api/"):
+            raise HTTPException(status_code=404, detail="Endpoint da API não encontrado.")
+            
+        file_path = os.path.join(frontend_path, full_path)
+        if full_path and os.path.isfile(file_path):
+            return FileResponse(file_path)
+            
+        return FileResponse(os.path.join(frontend_path, "index.html"))
